@@ -3,10 +3,6 @@ import 'package:flutter_2048/game/state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testComparingCubes();
-}
-
-void testComparingCubes() {
   final cubit = GameCubit();
   test('compare cubes test cubes with equal value', () {
     final firstCube = Cube(1, 1, 0, true);
@@ -49,5 +45,21 @@ void testComparingCubes() {
     final result = cubit.compareCubes([Cube(1, 1, 3, true)], 0, 1, 0);
 
     expect(result.length, 0);
+  });
+
+  test('compare with invisible cube', () {
+    final firstCube = Cube(1, 1, 0, true);
+    final secondCube = Cube(2, 2, 1, false);
+
+    final result = cubit.compareCubes(
+      [firstCube, secondCube],
+      firstCube.position,
+      secondCube.position,
+      firstCube.position,
+    );
+
+    expect(result.length, 2);
+    expect(result.contains(firstCube), true);
+    expect(result.contains(secondCube), true);
   });
 }

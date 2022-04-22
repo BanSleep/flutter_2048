@@ -18,8 +18,8 @@ class Game extends StatelessWidget {
           final size =
               math.min(constraints.maxHeight, constraints.maxWidth) / 4;
           return SizedBox(
-            width: size*4,
-            height: size*4,
+            width: size * 4,
+            height: size * 4,
             child: GestureDetector(
               onHorizontalDragEnd: (details) {
                 final pixels = details.velocity.pixelsPerSecond.dx;
@@ -44,31 +44,32 @@ class Game extends StatelessWidget {
                 }
               },
               child: Container(
-                color: const Color(0x00000000),
+                decoration: BoxDecoration(
+                  color: const Color(0x00000000),
+                  border: Border.all(color: Colors.black, width: 2),
+                ),
                 child: Stack(
                   children: [
-                    for (int i = 1; i <= 3; i++)
-                      ...[
-                        Positioned(
-                          left: i*size-2,
-                          top: 0,
-                          bottom: 0,
-                          width: 2,
-                          child: Container(
-                            color: Colors.black,
-                          ),
+                    for (int i = 1; i <= 3; i++) ...[
+                      Positioned(
+                        left: i * size - 2,
+                        top: 0,
+                        bottom: 0,
+                        width: 2,
+                        child: Container(
+                          color: Colors.black,
                         ),
-                        Positioned(
-                          top: i*size-2,
-                          left: 0,
-                          right: 0,
-                          height: 2,
-                          child: Container(
-                            color: Colors.black,
-                          ),
+                      ),
+                      Positioned(
+                        top: i * size - 2,
+                        left: 0,
+                        right: 0,
+                        height: 2,
+                        child: Container(
+                          color: Colors.black,
                         ),
-                      ],
-
+                      ),
+                    ],
                     ...state.cubes.map(
                       (e) => AnimatedPositioned(
                         curve: Curves.linearToEaseOut,

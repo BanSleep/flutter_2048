@@ -10,6 +10,8 @@ List<Cube> _randomInitPosition() {
   return [
     Cube(0, 1, 0, true),
     Cube(1, 1, 1, true),
+    Cube(2, 2, 2, true),
+    Cube(3, 4, 3, true),
   ];
 }
 
@@ -34,6 +36,11 @@ class Cube {
   @override
   int get hashCode =>
       id.hashCode ^ value.hashCode ^ position.hashCode ^ visible.hashCode;
+
+  @override
+  String toString() {
+    return 'Cube{id: $id, value: $value, position: $position, visible: $visible}';
+  }
 
   Cube copyWith({int? position, bool? visible}) => Cube(
         id,
