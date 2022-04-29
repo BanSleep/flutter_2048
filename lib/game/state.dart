@@ -3,15 +3,20 @@ class GameState {
 
   GameState(this.cubes);
 
+  @override
+  String toString() {
+    return 'GameState{cubes: $cubes}';
+  }
+
   GameState.generateInitPosition() : cubes = _randomInitPosition();
 }
 
 List<Cube> _randomInitPosition() {
   return [
     Cube(0, 1, 0, true),
-    Cube(1, 1, 1, true),
-    Cube(2, 2, 2, true),
-    Cube(3, 4, 3, true),
+    Cube(1, 1, 4, true),
+    Cube(2, 2, 8, true),
+    Cube(3, 4, 12, true),
   ];
 }
 

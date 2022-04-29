@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_2048/game/game.dart';
@@ -22,6 +24,9 @@ class GameCubit extends Cubit<GameState> {
   }
 
   _updateCubes(List<Cube> cubes) {
+    if (const ListEquality().equals(cubes, state.cubes)) {
+      return;
+    }
     cantMove = true;
     var safeCubes = cubes;
     final safeState = state;
@@ -36,25 +41,105 @@ class GameCubit extends Cubit<GameState> {
       emit(GameState(safeCubes));
     });
     Future.delayed(Game.animationDuration, () {
-      emit(GameState(safeCubes.where((element) => element.visible).toList()));
+      final newCubes = safeCubes.where((element) => element.visible).toList();
+      final toAdd = _generationCubes(newCubes);
+      if (toAdd != null) {
+        newCubes.add(toAdd);
+      }
+      emit(GameState(newCubes));
       cantMove = false;
     });
   }
 
+  Cube? _generationCubes(List<Cube> cubes) {
+    final position = (List.generate(16, (index) => index)
+            .where((element) =>
+                cubes.where((cube) => cube.position == element).isEmpty)
+            .toList()
+          ..shuffle())
+        .firstOrNull;
+    return (position != null
+        ? Cube(
+            cubes.sorted((a, b) => a.id - b.id).last.id +
+                Random().nextInt(100) +
+                1,
+            (Random().nextInt(2) % 2 + 1) * 2,
+            position,
+            true)
+        : null);
+  }
+
   moveUp() {
     print("moveUp");
+    if (cantMove) {
+      return;
+    }
+    var cubes = state.cubes;
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 3; j++) {
+        for (int k = j; k >= 0; k--) {
+          final newCubes =
+              compareCubes(cubes, k * 4 + i, k * 4 + 4 + i, k * 4 + i);
+          cubes = cubes
+              .where((first) =>
+                  newCubes.where((second) => second.id == first.id).isEmpty)
+              .toList()
+            ..addAll(newCubes);
+        }
+      }
+    }
+    _updateCubes(cubes);
   }
 
   moveDown() {
     print("moveDown");
+    if (cantMove) {
+      return;
+    }
+    var cubes = state.cubes;
+    for (int i = 0; i < 4; i++) {
+      for (int j = 2; j > -1; j--) {
+        for (int k = 0; k <= j; k++) {
+          final newCubes =
+              compareCubes(cubes, k * 4 + i, k * 4 + 4 + i, k * 4 + 4 + i);
+          cubes = cubes
+              .where((first) =>
+                  newCubes.where((second) => second.id == first.id).isEmpty)
+              .toList()
+            ..addAll(newCubes);
+        }
+      }
+    }
+    _updateCubes(cubes);
   }
 
   moveRight() {
     print("moveRight");
+    if (cantMove) {
+      return;
+    }
+    var cubes = state.cubes;
+    for (int i = 0; i < 4; i++) {
+      for (int j = 2; j > -1; j--) {
+        for (int k = 0; k <= j; k++) {
+          final newCubes =
+              compareCubes(cubes, i * 4 + k, i * 4 + k + 1, i * 4 + k + 1);
+          cubes = cubes
+              .where((first) =>
+                  newCubes.where((second) => second.id == first.id).isEmpty)
+              .toList()
+            ..addAll(newCubes);
+        }
+      }
+    }
+    _updateCubes(cubes);
   }
 
   moveLeft() {
     print("moveLeft");
+    if (cantMove) {
+      return;
+    }
     var cubes = state.cubes;
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 3; j++) {

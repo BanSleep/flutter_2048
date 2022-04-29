@@ -95,7 +95,7 @@ class Game extends StatelessWidget {
                               curve: Curves.linearToEaseOut,
                               duration: Game.animationDuration,
                               child: Container(
-                                color: Colors.primaries[e.value],
+                                color: Colors.primaries[(math.log(e.value)/math.log(2)).floor()],
                                 width: size - 2,
                                 height: size - 2,
                                 child: Center(
