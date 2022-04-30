@@ -11,6 +11,8 @@ class GameCubit extends Cubit<GameState> {
 
   GameCubit() : super(GameState([]));
 
+  GameCubit.test(GameState initState) : super(initState);
+
   startGame() {
     emit(GameState.generateInitPosition());
   }
@@ -24,12 +26,16 @@ class GameCubit extends Cubit<GameState> {
   }
 
   _updateCubes(List<Cube> cubes) {
-    if (const ListEquality().equals(cubes, state.cubes)) {
+    if (cubes.compare(state.cubes)) {
       return;
     }
     cantMove = true;
     var safeCubes = cubes;
     final safeState = state;
+    final toAdd = _generationCubes(safeCubes);
+    if (toAdd != null) {
+      safeCubes.add(toAdd);
+    }
     emit(GameState(safeCubes));
     Future.delayed(const Duration(milliseconds: 10), () {
       safeCubes = cubes
@@ -42,10 +48,6 @@ class GameCubit extends Cubit<GameState> {
     });
     Future.delayed(Game.animationDuration, () {
       final newCubes = safeCubes.where((element) => element.visible).toList();
-      final toAdd = _generationCubes(newCubes);
-      if (toAdd != null) {
-        newCubes.add(toAdd);
-      }
       emit(GameState(newCubes));
       cantMove = false;
     });
@@ -65,7 +67,8 @@ class GameCubit extends Cubit<GameState> {
                 1,
             (Random().nextInt(2) % 2 + 1) * 2,
             position,
-            true)
+            false,
+          )
         : null);
   }
 

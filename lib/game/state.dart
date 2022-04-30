@@ -54,3 +54,17 @@ class Cube {
         visible ?? this.visible,
       );
 }
+
+extension CubesExt on List<Cube> {
+  bool compare(List<Cube> other) {
+    if (other.length != length) {
+      return false;
+    }
+    for (int i = 0; i<length; i++) {
+      if (!other.contains(this[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
