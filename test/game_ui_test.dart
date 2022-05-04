@@ -68,7 +68,6 @@ void main() {
     await tester.pump();
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
     await tester.pump(const Duration(seconds: 1));
-    print(cubit.state.cubes.join("\n"));
     expect(
       cubit.state.cubes.length,
       6,

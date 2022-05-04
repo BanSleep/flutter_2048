@@ -19,9 +19,6 @@ class GameCubit extends Cubit<GameState> {
     final firstCube = _generationCubes([]);
     final secondCube = _generationCubes([firstCube!]);
     final thirdCube = _generationCubes([firstCube, secondCube!]);
-    print(firstCube);
-    print(secondCube);
-    print(thirdCube);
     _updateCubes([firstCube, secondCube, thirdCube!]);
   }
 
@@ -100,7 +97,6 @@ class GameCubit extends Cubit<GameState> {
   }
 
   moveUp() {
-    print("moveUp");
     if (cantMove) {
       return;
     }
@@ -122,7 +118,6 @@ class GameCubit extends Cubit<GameState> {
   }
 
   moveDown() {
-    print("moveDown");
     if (cantMove) {
       return;
     }
@@ -144,7 +139,6 @@ class GameCubit extends Cubit<GameState> {
   }
 
   moveRight() {
-    print("moveRight");
     if (cantMove) {
       return;
     }
@@ -166,7 +160,6 @@ class GameCubit extends Cubit<GameState> {
   }
 
   moveLeft() {
-    print("moveLeft");
     if (cantMove) {
       return;
     }
