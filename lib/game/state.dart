@@ -1,14 +1,34 @@
 class GameState {
   final List<Cube> cubes;
+  final bool gameEnded;
 
-  GameState(this.cubes);
+  GameState(this.cubes, this.gameEnded);
+
+  GameState copyWith({List<Cube>? cubes, bool? gameEnded}) => GameState(
+        cubes ?? this.cubes,
+        gameEnded ?? this.gameEnded,
+      );
 
   @override
   String toString() {
     return 'GameState{cubes: $cubes}';
   }
 
-  GameState.generateInitPosition() : cubes = _randomInitPosition();
+  GameState.generateInitPosition()
+      : cubes = _randomInitPosition(),
+        gameEnded = false;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GameState &&
+          runtimeType == other.runtimeType &&
+          cubes.compare(other.cubes) &&
+          gameEnded == other.gameEnded;
+
+  @override
+  int get hashCode => cubes.fold(gameEnded.hashCode,
+      (previousValue, element) => previousValue ^ element.hashCode);
 }
 
 List<Cube> _randomInitPosition() {
@@ -60,7 +80,7 @@ extension CubesExt on List<Cube> {
     if (other.length != length) {
       return false;
     }
-    for (int i = 0; i<length; i++) {
+    for (int i = 0; i < length; i++) {
       if (!other.contains(this[i])) {
         return false;
       }

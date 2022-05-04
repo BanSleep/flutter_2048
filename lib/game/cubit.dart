@@ -8,21 +8,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GameCubit extends Cubit<GameState> {
   bool cantMove = false;
+  final bool removeRecursion;
 
-  GameCubit() : super(GameState([]));
+  GameCubit({this.removeRecursion = false}) : super(GameState([], false));
 
-  GameCubit.test(GameState initState) : super(initState);
+  GameCubit.test(GameState initState, {this.removeRecursion = false})
+      : super(initState);
 
   startGame() {
-    emit(GameState.generateInitPosition());
-  }
-
-  test() {
-    _updateCubes([
-      Cube(0, 1, 0, false),
-      Cube(1, 1, 0, false),
-      Cube(2, 2, 0, false),
-    ]);
+    final firstCube = _generationCubes([]);
+    final secondCube = _generationCubes([firstCube!]);
+    final thirdCube = _generationCubes([firstCube, secondCube!]);
+    print(firstCube);
+    print(secondCube);
+    print(thirdCube);
+    _updateCubes([firstCube, secondCube, thirdCube!]);
   }
 
   _updateCubes(List<Cube> cubes) {
@@ -36,7 +36,7 @@ class GameCubit extends Cubit<GameState> {
     if (toAdd != null) {
       safeCubes.add(toAdd);
     }
-    emit(GameState(safeCubes));
+    emit(state.copyWith(cubes: safeCubes));
     Future.delayed(const Duration(milliseconds: 10), () {
       safeCubes = cubes
           .map((e) =>
@@ -44,11 +44,14 @@ class GameCubit extends Cubit<GameState> {
                   ? e.copyWith(visible: true)
                   : e)
           .toList();
-      emit(GameState(safeCubes));
+      emit(state.copyWith(cubes: safeCubes));
     });
     Future.delayed(Game.animationDuration, () {
       final newCubes = safeCubes.where((element) => element.visible).toList();
-      emit(GameState(newCubes));
+      emit(state.copyWith(cubes: newCubes));
+      if (removeRecursion) {
+        _checkNextMove();
+      }
       cantMove = false;
     });
   }
@@ -62,7 +65,7 @@ class GameCubit extends Cubit<GameState> {
         .firstOrNull;
     return (position != null
         ? Cube(
-            cubes.sorted((a, b) => a.id - b.id).last.id +
+            (cubes.sorted((a, b) => a.id - b.id).lastOrNull?.id ?? 0) +
                 Random().nextInt(100) +
                 1,
             (Random().nextInt(2) % 2 + 1) * 2,
@@ -70,6 +73,30 @@ class GameCubit extends Cubit<GameState> {
             false,
           )
         : null);
+  }
+
+  _checkNextMove() {
+    final test = GameCubit.test(
+      state,
+      removeRecursion: true,
+    );
+    test.moveDown();
+    if (test.state != state) {
+      return;
+    }
+    test.moveUp();
+    if (test.state != state) {
+      return;
+    }
+    test.moveLeft();
+    if (test.state != state) {
+      return;
+    }
+    test.moveRight();
+    if (test.state != state) {
+      return;
+    }
+    emit(state.copyWith(gameEnded: true));
   }
 
   moveUp() {
@@ -124,7 +151,7 @@ class GameCubit extends Cubit<GameState> {
     var cubes = state.cubes;
     for (int i = 0; i < 4; i++) {
       for (int j = 2; j > -1; j--) {
-        for (int k = 0; k <= j; k++) {
+        for (int k = j; k < 3; k++) {
           final newCubes =
               compareCubes(cubes, i * 4 + k, i * 4 + k + 1, i * 4 + k + 1);
           cubes = cubes

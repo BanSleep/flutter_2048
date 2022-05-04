@@ -95,13 +95,14 @@ class Game extends StatelessWidget {
                               curve: Curves.linearToEaseOut,
                               duration: Game.animationDuration,
                               child: Container(
-                                color: Colors.primaries[(math.log(e.value)/math.log(2)).floor()],
+                                color: Colors.primaries[
+                                    (math.log(e.value) / math.log(2)).floor()],
                                 width: size - 2,
                                 height: size - 2,
                                 child: Center(
                                     child: Text(
                                   e.value.toString(),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 40,
                                     color: Colors.white,
                                   ),
@@ -111,6 +112,17 @@ class Game extends StatelessWidget {
                             duration: Game.animationDuration,
                           ),
                         ),
+                        if (state.gameEnded)
+                          Positioned.fill(
+                            child: Center(
+                              child: TextButton(
+                                onPressed: () {
+                                  context.read<GameCubit>().startGame();
+                                },
+                                child: const Text("Начать новую игру"),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
