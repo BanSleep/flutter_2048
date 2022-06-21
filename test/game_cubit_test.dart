@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   final cubit = GameCubit();
+  final state = GameState([Cube(0, 2, 0, true), Cube(1, 2, 1, true)], false);
   test('compare cubes test cubes with equal value', () {
     final firstCube = Cube(1, 1, 0, true);
     final secondCube = Cube(2, 1, 1, true);
@@ -14,6 +15,14 @@ void main() {
     expect(result.contains(Cube(1, 1, 0, false)), true);
     expect(result.contains(Cube(2, 1, 0, false)), true);
   });
+  test('start test', () {
+    final result = cubit.startGame();
+  });
+
+  test('state test', () {
+    final result = GameState.generateInitPosition();
+  });
+
 
   test('compare cubes test cubes with diff value', () {
     final firstCube = Cube(1, 1, 0, true);

@@ -1,14 +1,17 @@
 import 'dart:math';
+import 'dart:developer' as l;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_2048/game/game.dart';
 import 'package:flutter_2048/game/state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_storage/get_storage.dart';
 
 class GameCubit extends Cubit<GameState> {
   bool cantMove = false;
   final bool removeRecursion;
+  int result = 0;
 
   GameCubit({this.removeRecursion = false}) : super(GameState([], false));
 
@@ -16,6 +19,8 @@ class GameCubit extends Cubit<GameState> {
       : super(initState);
 
   startGame() {
+
+    emit(state.copyWith(gameEnded: false));
     final firstCube = _generationCubes([]);
     final secondCube = _generationCubes([firstCube!]);
     final thirdCube = _generationCubes([firstCube, secondCube!]);
@@ -46,7 +51,8 @@ class GameCubit extends Cubit<GameState> {
     Future.delayed(Game.animationDuration, () {
       final newCubes = safeCubes.where((element) => element.visible).toList();
       emit(state.copyWith(cubes: newCubes));
-      if (removeRecursion) {
+      l.log(removeRecursion.toString(), name: "recuesion");
+      if (cubes.length == 16) {
         _checkNextMove();
       }
       cantMove = false;
@@ -73,31 +79,85 @@ class GameCubit extends Cubit<GameState> {
   }
 
   _checkNextMove() {
+    bool noWayUp = false;
+    bool noWayDown = false;
+    bool noWayLeft = false;
+    bool noWayRight = false;
     final test = GameCubit.test(
       state,
       removeRecursion: true,
     );
+    l.log("test25: ${_debilTest()}");
+    l.log('1111');
     test.moveDown();
     if (test.state != state) {
       return;
+    } else {
+      noWayDown = true;
     }
+    l.log('2222');
     test.moveUp();
     if (test.state != state) {
       return;
+    } else {
+      noWayUp = true;
     }
+    l.log('3333');
     test.moveLeft();
     if (test.state != state) {
       return;
+    } else {
+      noWayLeft = true;
     }
     test.moveRight();
+    l.log('4444');
     if (test.state != state) {
       return;
+    } else {
+      noWayRight = true;
     }
-    emit(state.copyWith(gameEnded: true));
+    if (noWayRight && noWayLeft && noWayDown && noWayUp) {
+      l.log('1111111123');
+      emit(state.copyWith(gameEnded: true));
+    }
+  }
+
+  bool _debilTest() {
+    bool noWayUp = false;
+    bool noWayDown = false;
+    bool noWayLeft = false;
+    bool noWayRight = false;
+    final test = GameCubit.test(
+      state,
+      removeRecursion: true,
+    );
+    l.log('1111');
+    test.moveDown();
+    if (test.state != state) {
+      return false;
+    }
+    l.log('2222');
+    test.moveUp();
+    if (test.state != state) {
+      return false;
+    }
+    l.log('3333');
+    test.moveLeft();
+    if (test.state != state) {
+      return false;
+    }
+    test.moveRight();
+    l.log('4444');
+    if (test.state != state) {
+      return false;
+    }
+    return true;
   }
 
   moveUp() {
+    l.log('TUT');
     if (cantMove) {
+      l.log('TUT');
       return;
     }
     var cubes = state.cubes;
@@ -218,6 +278,9 @@ class GameCubit extends Cubit<GameState> {
         firstCube.visible &&
         secondCube.visible) {
       final newId = cubes.sorted((a, b) => a.id - b.id).last.id + 1;
+      result += firstCube.value * 2;
+      GetStorage().write('score', result);
+      l.log(result.toString(), name: "result");
       return [
         Cube(newId, firstCube.value * 2, goalPosition, false),
         firstCube.copyWith(

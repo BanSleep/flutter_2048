@@ -36,8 +36,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_bloc: ^8.0.1
   collection: ^1.15.0
+  get: ^4.6.5
+  get_storage: ^2.0.3
 
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
 
