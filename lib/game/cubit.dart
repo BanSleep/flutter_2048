@@ -87,7 +87,6 @@ class GameCubit extends Cubit<GameState> {
       state,
       removeRecursion: true,
     );
-    l.log("test25: ${_debilTest()}");
     l.log('1111');
     test.moveDown();
     if (test.state != state) {
@@ -122,37 +121,6 @@ class GameCubit extends Cubit<GameState> {
     }
   }
 
-  bool _debilTest() {
-    bool noWayUp = false;
-    bool noWayDown = false;
-    bool noWayLeft = false;
-    bool noWayRight = false;
-    final test = GameCubit.test(
-      state,
-      removeRecursion: true,
-    );
-    l.log('1111');
-    test.moveDown();
-    if (test.state != state) {
-      return false;
-    }
-    l.log('2222');
-    test.moveUp();
-    if (test.state != state) {
-      return false;
-    }
-    l.log('3333');
-    test.moveLeft();
-    if (test.state != state) {
-      return false;
-    }
-    test.moveRight();
-    l.log('4444');
-    if (test.state != state) {
-      return false;
-    }
-    return true;
-  }
 
   moveUp() {
     l.log('TUT');
